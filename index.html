@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mental Health Helper</title>
+    <link rel="icon" type="image/x-icon" href="images/favicon.ico"/>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #046aaa 0%, #80c4ff 100%); /* Default background gradient */
+            background-size: cover;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            color: #333;
+            overflow: hidden;
+            transition: background 0.3s ease; /* Smooth transition for background changes */
+        }
+
+        .background-shapes {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: -1;
+        }
+
+        .shape {
+            position: absolute;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.15);
+            animation: float 10s infinite ease-in-out;
+        }
+
+        .shape1 {
+            width: 250px;
+            height: 250px;
+            top: 15%;
+            left: 5%;
+        }
+
+        .shape2 {
+            width: 180px;
+            height: 180px;
+            top: 70%;
+            left: 80%;
+        }
+
+        .shape3 {
+            width: 120px;
+            height: 120px;
+            top: 50%;
+            left: 85%;
+        }
+
+        .shape4 {
+            width: 300px;
+            height: 300px;
+            top: 75%;
+            left: 25%;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(0) translateX(0);
+            }
+            50% {
+                transform: translateY(-15px) translateX(15px);
+            }
+            100% {
+                transform: translateY(0) translateX(0);
+            }
+        }
+
+        .chat-container {
+            width: 500px;
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            z-index: 1;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        #chat-box {
+            margin-bottom: 20px;
+            max-height: 500px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 10px;
+            background-color: #f9f9f9;
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.05);
+            transition: background-color 0.3s ease;
+        }
+
+        .message {
+            margin-bottom: 15px;
+            padding: 15px;
+            border-radius: 10px;
+            max-width: 80%;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .bot-message {
+            background-color: #e0e0e0;
+            text-align: left;
+        }
+
+        .user-message {
+            background-color: #046aaa;
+            color: white;
+            text-align: right;
+            margin-left: auto;
+        }
+
+        .typing-indicator {
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .typing-indicator span {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            background-color: #ccc;
+            border-radius: 50%;
+            margin-right: 4px;
+            animation: blink 1s infinite ease-in-out;
+        }
+
+        .typing-indicator span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-indicator span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes blink {
+            0%, 20%, 50%, 80%, 100% {
+                opacity: 1;
+            }
+            40% {
+                opacity: 0.3;
+            }
+            60% {
+                opacity: 0.3;
+            }
+        }
+
+        button {
+            display: block;
+            width: 100%;
+            margin-bottom: 10px;
+            padding: 12px;
+            background-color: #046aaa;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            font-size: 16px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        button:hover {
+            background-color: #03588a;
+            transform: translateY(-2px);
+        }
+
+        .settings-panel {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background-color: #ffffff;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            z-index: 2;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .settings-panel h3 {
+            margin-top: 0;
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        .settings-panel label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+
+        .settings-panel input[type="radio"],
+        .settings-panel input[type="checkbox"] {
+            margin-right: 5px;
+        }
+
+        .dark-mode {
+            background-color: #333;
+            color: #fff;
+        }
+
+        .dark-mode .chat-container,
+        .dark-mode .settings-panel {
+            background-color: #444;
+            color: #fff;
+        }
+
+        .dark-mode #chat-box {
+            background-color: #555;
+            border: 1px solid #666;
+        }
+
+        .dark-mode button {
+            background-color: #046aaa;
+            color: white;
+        }
+        .blur {
+            filter: blur(10px);
+            pointer-events: none; 
+        }
+        .blur-exclude {
+            filter: none;
+            pointer-events: auto; 
+        }
+
+    </style>
+    
+</head>
+<body>
+    <header style="position: absolute; top: 0; width: 100%; display: flex; align-items: center; justify-content: center; padding: 20px; background: rgba(255, 255, 255, 0.6); backdrop-filter: blur(10px); z-index: 10;">
+        <div style="display: flex; align-items: center; gap: 15px;">
+            <img src="images/logo.png" alt="Logo" style="width: 100px; height: 100px; object-fit: contain;">
+            <div>
+                <h1 style="margin: 0; font-size: 24px; color: #046aaa;">Mental Health Helper</h1>
+                <p style="margin: 0; font-size: 14px; color: #333;">Anonymous support for when you need it.</p>
+            </div>
+        </div>
+    </header>
+
+<div class="background-shapes">
+    <div class="shape shape1"></div>
+    <div class="shape shape2"></div>
+    <div class="shape shape3"></div>
+    <div class="shape shape4"></div>
+</div>
+
+<div class="chat-container">
+    <div id="chat-box"></div>
+    <div id="response-options"></div>
+</div>
+
+
+<div class="settings-panel blur-exclude">
+    <h3>Settings</h3>
+    <label><input type="radio" name="background" value="bg1" checked> Blue</label>
+    <label><input type="radio" name="background" value="bg2"> Red</label>
+    <label><input type="radio" name="background" value="bg3"> Gradient</label>
+    <label><input type="radio" name="background" value="bg4"> Green</label>
+    <label><input type="checkbox" id="dark-mode-toggle"> Dark Mode</label>
+    <label><input type="checkbox" id="privacy-mode-toggle"> Privacy Mode</label>
+</div>
+
+<script>
+    const chatBox = document.getElementById('chat-box');
+    const responseOptions = document.getElementById('response-options');
+    const body = document.body;
+    const settingsPanel = document.querySelector('.settings-panel');
+    const darkModeToggle = document.getElementById('dark-mode-toggle');
+
+    const backgrounds = {
+        bg1: "linear-gradient(135deg, #1520a6 0%, #80c4ff 100%)",
+        bg2: "linear-gradient(135deg, #ff2c2c 0%, #FFE5B4 100%)",
+        bg3: "linear-gradient(135deg, #c9ffbf 0%, #ffafbd 100%)",
+        bg4: "linear-gradient(135deg, #d4fc79 0%, #96e6a1 100%)"
+    };
+
+    
+const privacyModeToggle = document.getElementById('privacy-mode-toggle');
+
+privacyModeToggle.addEventListener('click', () => {
+    body.classList.toggle('blur');
+});
+
+
+    document.querySelectorAll('input[name="background"]').forEach(radio => {
+        radio.addEventListener('change', (event) => {
+            body.style.background = backgrounds[event.target.value];
+        });
+    });
+
+    darkModeToggle.addEventListener('change', () => {
+        body.classList.toggle('dark-mode');
+    });
+
+    function addTypingIndicator() {
+        const typingIndicator = document.createElement('div');
+        typingIndicator.classList.add('typing-indicator');
+        typingIndicator.innerHTML = '<span></span><span></span><span></span>';
+        chatBox.appendChild(typingIndicator);
+        chatBox.scrollTop = chatBox.scrollHeight;
+        return typingIndicator;
+    }
+
+    function removeTypingIndicator(typingIndicator) {
+        chatBox.removeChild(typingIndicator);
+    }
+
+    function askQuestion(question, options) {
+        const typingIndicator = addTypingIndicator();
+
+        setTimeout(() => {
+            removeTypingIndicator(typingIndicator);
+            const botMessage = document.createElement('div');
+            botMessage.classList.add('message', 'bot-message');
+            botMessage.textContent = question;
+            chatBox.appendChild(botMessage);
+
+            responseOptions.innerHTML = ''; // Clear previous options
+            options.forEach(option => {
+                const button = document.createElement('button');
+                button.textContent = option.text;
+                button.onclick = () => handleResponse(option.response);
+                responseOptions.appendChild(button);
+            });
+
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }, 1000); // Simulate typing delay
+    }
+
+    function handleResponse(response) {
+        const userMessage = document.createElement('div');
+        userMessage.classList.add('message', 'user-message');
+        userMessage.textContent = response.text;
+        chatBox.appendChild(userMessage);
+        chatBox.scrollTop = chatBox.scrollHeight;
+
+        setTimeout(() => {
+            if (response.followUp) {
+                askQuestion(response.followUp.question, response.followUp.options);
+            } else {
+                responseOptions.innerHTML = ''; // Clear options if no follow-up
+            }
+        }, 1000); // Delay for response
+    }
+
+    // You can edit the initial question, options, and responses here
+    const initialQuestion = "How are you today?";
+const initialOptions = [
+    {
+        text: 'Not doing very well :(',
+        response: {
+            text: 'Not doing very well.',
+            followUp: {
+                question: "I'm sorry to hear that, is everything OK?",
+                options: [
+                    {
+                        text: 'Yes, just a rough day.',
+                        response: {
+                            text: 'Yes, just a rough day.',
+                            followUp: {
+                                question: "I hope things get better soon. Would you like a way to cheer yourself up, a meditation routine or a case study about how others deal with tough situations?",
+                                options: [
+                                    {
+                                        text: 'A way to cheer myself up would help.',
+                                        response: {
+                                            text: 'A way to cheer myself up would help.',
+                                            followUp: {
+                                                question: "Here are some suggestions to help you feel better: Take a Deep Breath: Sometimes just focusing on your breath for a minute can help clear your mind. Listen to Favorite Music: Play a song that you love or that makes you feel good. Move Your Body: A quick dance, stretch, or walk can boost your mood. Connect with a Friend: Reach out to someone you like talking to, even if it’s just a quick message. Do Something You Enjoy: Engage in a hobby or activity you find relaxing or fun. Practice Gratitude: Write down or think of a few things you’re grateful for. Watch or Read Something Uplifting: Find a funny video or read a favorite book. I hope these help."
+                                            }
+                                        }   
+                                        },
+                                        {
+                                        text: 'A meditation would help.',
+                                        response: {
+                                            text: 'A meditation would help.',
+                                            followUp: {
+                                                question: "Find a comfortable position, either sitting or lying down, and close your eyes. Take a deep breath in through your nose, feeling your lungs expand, then slowly exhale through your mouth, releasing any tension. Continue this deep breathing, focusing on the rhythm of your breath. As you breathe, bring your attention to your body, starting at the top of your head and working your way down. Visualize a warm, soothing light relaxing each part of your body. Let go of any tension with each exhale. Now, picture a place where you feel completely at ease and happy, whether it’s a real location or from your imagination. Immerse yourself in this place, enjoying the sights, sounds, and sensations. Feel the joy growing within you. Repeat to yourself: “I am worthy of happiness and joy. Today, I choose to focus on the positive aspects of life. I embrace the good things in my life and am grateful for them. I am confident, capable, and ready to make today a great day.” Allow these affirmations to fill you with a sense of calm and positivity. I hope this helped you."
+
+                                            }
+                                        }
+                                    },
+                                
+                                    {
+                                        text: 'Can I hear about how others dealt with similar situations.',
+                                        response: {
+                                            text: 'Can I hear about how others dealt with similar situations.',
+                                            followUp: {
+                                                question: "Sarah is a 32-year-old woman who’s been feeling very sad and worried lately. She often feels tired and has a hard time focusing on things. Sarah's sleep is all messed up; she wakes up a lot during the night and has trouble falling back asleep. She feels down and thinks she’s not good at anything, and she’s worried about what the future holds. Sarah also doesn’t have much of an appetite and doesn’t enjoy things she used to like. Her job is very stressful, and she’s been getting a lot more work recently. She’s also having a hard time with her partner because of how she’s been feeling. Even though Sarah doesn’t use drugs or alcohol, her family has a history of feeling sad. Sarah decided to get help after feeling really overwhelmed and having thoughts of hurting herself. When doctors checked, they found that Sarah was very stressed and sad. To help her feel better, Sarah will see a therapist who can help her change how she thinks and give her ways to handle stress. The doctors are also thinking about giving her some medicine to help with her feelings. Sarah is encouraged to stay active, like going for walks or playing sports, and to try relaxing activities to reduce her stress. They will keep checking in with her to see how she’s doing and make any changes to her plan if needed.",
+                                                options: [
+                                                    
+                                                ]
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    },
+                    {
+                        text: "No, I'm struggling with my mental health.",
+                        response: {
+                            text: "No, I'm struggling with my mental health.",
+                            followUp: {
+                                question: "I'm here if you need to talk. Would you like some ways to take your mind off things, like a meditation? I could give you a case study of how others deal with similar situation or I could give you some people you could talk to if you want to interact with a real human.",
+                                options: [
+                                {
+                                        text: 'Can you tell who I could talk to?',
+                                        response: {
+                                            text: 'Can you tell me who I could talk to?',
+                                            followUp: {
+                                                question: "Sure. You could try talking to a responsible adult or figure in your life, for example a family member or friend. You could also go to a doctor to try to get a diagnosis or medication if needed. Helplines can also help. You could call Lifeline on 13 11 14, Beyond Blue on 1300 22 4636, Mindspot on 1800 61 44 34, Head to Health on 1800 595 212, Kids Helpline (if your aged 5-25) on 1800 55 1800 or Suicide Call Back Service on 1300 659 467. In an emergency or immediate crisis, call 000. I hope this helps."
+                                            }
+                                        }   
+                                        },
+                                        {
+                                        text: 'A meditation would help.',
+                                        response: {
+                                            text: 'A meditation would help.',
+                                            followUp: {
+                                                question: "Find a comfortable position, either sitting or lying down, and close your eyes. Take a deep breath in through your nose, feeling your lungs expand, then slowly exhale through your mouth, releasing any tension. Continue this deep breathing, focusing on the rhythm of your breath. As you breathe, bring your attention to your body, starting at the top of your head and working your way down. Visualize a warm, soothing light relaxing each part of your body. Let go of any tension with each exhale. Now, picture a place where you feel completely at ease and happy, whether it’s a real location or from your imagination. Immerse yourself in this place, enjoying the sights, sounds, and sensations. Feel the joy growing within you. Repeat to yourself: “I am worthy of happiness and joy. Today, I choose to focus on the positive aspects of life. I embrace the good things in my life and am grateful for them. I am confident, capable, and ready to make today a great day.” Allow these affirmations to fill you with a sense of calm and positivity. I hope this helped you."
+
+                                            }
+                                        }
+                                    },
+                                
+                                    {
+                                        text: 'Can I hear about how others dealt with similar situations.',
+                                        response: {
+                                            text: 'Can I hear about how others dealt with similar situations.',
+                                            followUp: {
+                                                question: "Sarah is a 32-year-old woman who’s been feeling very sad and worried lately. She often feels tired and has a hard time focusing on things. Sarah's sleep is all messed up; she wakes up a lot during the night and has trouble falling back asleep. She feels down and thinks she’s not good at anything, and she’s worried about what the future holds. Sarah also doesn’t have much of an appetite and doesn’t enjoy things she used to like. Her job is very stressful, and she’s been getting a lot more work recently. She’s also having a hard time with her partner because of how she’s been feeling. Even though Sarah doesn’t use drugs or alcohol, her family has a history of feeling sad. Sarah decided to get help after feeling really overwhelmed and having thoughts of hurting herself. When doctors checked, they found that Sarah was very stressed and sad. To help her feel better, Sarah will see a therapist who can help her change how she thinks and give her ways to handle stress. The doctors are also thinking about giving her some medicine to help with her feelings. Sarah is encouraged to stay active, like going for walks or playing sports, and to try relaxing activities to reduce her stress. They will keep checking in with her to see how she’s doing and make any changes to her plan if needed.",
+                                                
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                ]
+            }
+        }
+    },
+    {
+        text: 'Okay',
+        response: {
+            text: 'Okay.',
+            followUp: {
+                question: "Glad to hear that. Do you want to talk about something?",
+                options: [
+                    {
+                        text: "I'm just having a look at this tool.",
+                        response: {
+                            text: "I'm just having a look at this tool.",
+                            followUp: {
+                                question: "Cool! You can reload the page and have a look at another outcome!",
+                            }
+                        }
+                    },
+                    {
+                        text: "I just want to know if what I'm feeling is OK.",
+                        response: {
+                            text: "I just want to know if what I'm feeling is OK.",
+                            followUp: {
+                                question: "It's alright to feel whatever your feeling. Sometimes you need to push through that and learn that you'll be OK, or sometimes you need to acknoledge that you are OK and try to find a way top improve the situation. It is important to note that if your situation becomes unmanagable, you should seek professinal support.",
+                            }
+                        }
+                    },
+                    {
+                        text: "I'm a bit stressed",
+                        response: {
+                            text: "I'm a bit stressed",
+                            followUp: {
+                                question: "Would you like a way to calm yourself, like a meditation or breathing exercise.",
+                                options: [
+                            
+                                        {
+                                        text: 'A meditation would help.',
+                                        response: {
+                                            text: 'A meditation would help.',
+                                            followUp: {
+                                                question: "Find a comfortable position, either sitting or lying down, and close your eyes. Take a deep breath in through your nose, feeling your lungs expand, then slowly exhale through your mouth, releasing any tension. Continue this deep breathing, focusing on the rhythm of your breath. As you breathe, bring your attention to your body, starting at the top of your head and working your way down. Visualize a warm, soothing light relaxing each part of your body. Let go of any tension with each exhale. Now, picture a place where you feel completely at ease and happy, whether it’s a real location or from your imagination. Immerse yourself in this place, enjoying the sights, sounds, and sensations. Feel the joy growing within you. Repeat to yourself: “I am worthy of happiness and joy. Today, I choose to focus on the positive aspects of life. I embrace the good things in my life and am grateful for them. I am confident, capable, and ready to make today a great day.” Allow these affirmations to fill you with a sense of calm and positivity. I hope this helped you."
+
+                                            }
+                                        }
+                                    },
+                                
+                                    {
+                                        text: 'Can you give me some breathing exercises.',
+                                        response: {
+                                            text: 'Can you give me some breathing exercises.',
+                                            followUp: {
+                                                question: "How about you try the 4-7-8 breathing technique. It's breathing technique involves breathing in for 4 seconds, holding the breath for 7 seconds, and exhaling for 8 seconds. This breathing pattern aims to reduce anxiety or help people get to sleep. The 4-7-8 breathing technique is a form of pranayama, which is the practice of breath regulation. I hope this helps.",
+                                                
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                ]
+            }
+        }
+    },
+    {
+        text: 'Great :)',
+        response: {
+            text: 'Great!',
+            followUp: {
+                question: "That's awesome! Anything you want to talk about?",
+                options: [
+                    {
+                        text: 'Not really. Just having a look at this tool.',
+                        response: {
+                            text: 'Not really. Just having a look at this tool.',
+                            followUp: {
+                                question: "Cool! You can reload the page and have a look at another outcome!",
+                            }
+                        }
+                    },
+                    {
+                        text: "I'm worried about someone else's mental health.",
+                        response: {
+                            text: "I'm worried about someone else's mental health.",
+                            followUp: {
+                                question: "Tell me more about it. Would you like some resources or tips on how to support them? I could give you some advice of what to ask them and tell them. I think the best advice I could give you is to give this tool to them and get the information and support first-hand.",
+                                options: [
+                                {
+                                        text: 'Can you tell me how to help them and what to say.',
+                                        response: {
+                                            text: 'Can you tell me how to help them and what to say.',
+                                            followUp: {
+                                                question: "You could try asking them what's wrong and suggest that they go see a trained professinal. The most importants things though is that you are there to listen and just let them share whatever they need to and that you are understanding and non-judgemental. "
+
+                                            }
+                                        }
+                                    },
+                                
+                                    {
+                                        text: "I'll give this tool to them.",
+                                        response: {
+                                            text: "I'll give this tool to them.",
+                                            followUp: {
+                                                question: "Ok. I hope this helps them out.",
+                                                
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                ]
+            }
+        }
+    }
+];
+
+// Placeholder sections for additional questions and replies
+const additionalQuestions = [
+    {
+        question: "Additional question 1",
+        options: [
+            {
+                text: 'Option 1',
+                response: {
+                    text: 'Response for Option 1.',
+                    followUp: {
+                        question: "Follow-up question for Option 1.",
+                        options: [
+                            // Add more options if needed
+                        ]
+                    }
+                }
+            },
+            {
+                text: 'Option 2',
+                response: {
+                    text: 'Response for Option 2.',
+                    followUp: {
+                        question: "Follow-up question for Option 2.",
+                        options: [
+                            // Add more options if needed
+                        ]
+                    }
+                }
+            }
+        ]
+    },
+    {
+        question: "Additional question 2",
+        options: [
+            {
+                text: 'Option 1',
+                response: {
+                    text: 'Response for Option 1.',
+                    followUp: {
+                        question: "Follow-up question for Option 1.",
+                        options: [
+                            // Add more options if needed
+                        ]
+                    }
+                }
+            },
+            {
+                text: 'Option 2',
+                response: {
+                    text: 'Response for Option 2.',
+                    followUp: {
+                        question: "Follow-up question for Option 2.",
+                        options: [
+                            // Add more options if needed
+                        ]
+                    }
+                }
+            }
+        ]
+    }
+];
+
+
+    askQuestion(initialQuestion, initialOptions);
+</script>
+
+</body>
+</html>
